@@ -14,7 +14,7 @@ if [[ $4 ]]; then TOKEN_VALUE=$4; else TOKEN_VALUE=1; fi #optional
 
 ADDR=$(cat acct.addr)
 FEE=1000000
-DIR=test
+DIR=many-ma-policy
 
 mkdir -p ./$DIR
 rm -f ./$DIR/*
@@ -53,7 +53,7 @@ printf "\nBuilding raw transaction...\n"
 echo $(cardano-cli transaction build-raw --tx-in $tx_hash#$tx_ix --tx-out="$ADDR+$(expr $lovelace - $FEE) $ma_string" --mint="$mint_string" --fee $FEE --out-file txbody --mary-era)
 
 echo "Signing..."
-echo $(cardano-cli transaction sign --tx-body-file txbody --signing-key-file acct.skey --signing-key-file test/policy.skey --script-file test/policy.script --testnet-magic $(cat magic) --tx-file tx)
+echo $(cardano-cli transaction sign --tx-body-file txbody --signing-key-file acct.skey --signing-key-file $DIR/policy.skey --script-file $DIR/policy.script --testnet-magic $(cat magic) --tx-file tx)
 
 echo "Submit?"
 read
