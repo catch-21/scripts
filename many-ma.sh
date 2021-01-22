@@ -2,17 +2,17 @@
 
 ####
 ## Need to execute in directory with:
-## - acct.skey and acct.addr that will receive tokens - must have enough funds to make transaction
+## - acct.skey and acct.addr that will receive tokens - must have UTxO with enough funds to make transaction
 ## - node directory with active socket
 ## - magic
 ####
 
-ADDR=$1
-UTXO=$2
-COUNT=$3
-ASSET_NAME=$4 #optional
-if [[ $5 ]]; then TOKEN_VALUE=$5; else TOKEN_VALUE=1; fi #optional
+UTXO=$1
+COUNT=$2
+ASSET_NAME=$3 #optional
+if [[ $4 ]]; then TOKEN_VALUE=$4; else TOKEN_VALUE=1; fi #optional
 
+ADDR=$(cat acct.addr)
 FEE=1000000
 DIR=test
 
@@ -26,7 +26,6 @@ echo $(cardano-cli transaction policyid --script-file $DIR/policy.script) > $DIR
 policyId=$(cat $DIR/policyId)
 
 utxo_query=$(CARDANO_NODE_SOCKET_PATH=node/node.socket cardano-cli query utxo --address $ADDR --testnet-magic $(cat magic) --mary-era)
-#echo "$utxo_query"
 
 got_utxo="false"
 utxo_query_line=3
@@ -49,7 +48,6 @@ do
    ma_string="$ma_string+$TOKEN_VALUE $policyId.$ASSET_NAME$i"
 done
 [[ ${#ma_string} > 0 ]] && mint_string="${ma_string:1}"
-echo $ma_string
 
 printf "\nBuilding raw transaction...\n"
 echo $(cardano-cli transaction build-raw --tx-in $tx_hash#$tx_ix --tx-out="$ADDR+$(expr $lovelace - $FEE) $ma_string" --mint="$mint_string" --fee $FEE --out-file txbody --mary-era)
