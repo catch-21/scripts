@@ -25,7 +25,7 @@ echo "{\"keyHash\": \"$(cat $DIR/keyhash)\", \"type\": \"sig\"}" > $DIR/policy.s
 echo $(cardano-cli transaction policyid --script-file $DIR/policy.script) > $DIR/policyId
 policyId=$(cat $DIR/policyId)
 
-utxo_query=$(CARDANO_NODE_SOCKET_PATH=node/node.socket cardano-cli query utxo --address $ADDR --testnet-magic $(cat magic) --mary-era)
+utxo_query=$(CARDANO_NODE_SOCKET_PATH=node/node.sock cardano-cli query utxo --address $ADDR --testnet-magic $(cat magic) --mary-era)
 
 got_utxo="false"
 utxo_query_line=3
@@ -57,4 +57,4 @@ echo $(cardano-cli transaction sign --tx-body-file txbody --signing-key-file acc
 
 echo "Submit?"
 read
-$(CARDANO_NODE_SOCKET_PATH=node/node.socket cardano-cli transaction submit --tx-file tx --testnet-magic $(cat magic))
+$(CARDANO_NODE_SOCKET_PATH=node/node.sock cardano-cli transaction submit --tx-file tx --testnet-magic $(cat magic))
